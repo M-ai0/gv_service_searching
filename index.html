@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日本の行政サービス・施策検索</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .loading {
+            display: none;
+        }
+        .loading.active {
+            display: flex;
+        }
+        .result-area {
+            display: none;
+        }
+        .result-area.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen py-6 flex flex-col justify-center sm:py-12">
+        <div class="relative py-3 sm:max-w-xl sm:mx-auto">
+            <div class="relative px-4 py-10 bg-white mx-8 md:mx-0 shadow rounded-3xl sm:p-10">
+                <div class="max-w-md mx-auto">
+                    <div class="divide-y divide-gray-200">
+                        <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+                            <h1 class="text-2xl font-bold text-center mb-8">日本の行政サービス・施策検索</h1>
+                            <form id="searchForm" class="space-y-6">
+                                <!-- 年齢入力 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">年齢</label>
+                                    <input type="number" id="age" name="age" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <!-- 性別選択 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">性別</label>
+                                    <div class="mt-2 space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="gender" value="男性" required class="form-radio">
+                                            <span class="ml-2">男性</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="gender" value="女性" required class="form-radio">
+                                            <span class="ml-2">女性</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="gender" value="その他" required class="form-radio">
+                                            <span class="ml-2">その他</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- ライフステージ選択 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">ライフステージ</label>
+                                    <select id="lifeStage" name="lifeStage" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">選択してください</option>
+                                        <option value="学生">学生</option>
+                                        <option value="就職活動中">就職活動中</option>
+                                        <option value="社会人">社会人</option>
+                                        <option value="結婚・子育て">結婚・子育て</option>
+                                        <option value="退職後">退職後</option>
+                                    </select>
+                                </div>
+
+                                <!-- 職業選択 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">職業</label>
+                                    <select id="occupation" name="occupation" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">選択してください</option>
+                                        <option value="会社員">会社員</option>
+                                        <option value="公務員">公務員</option>
+                                        <option value="自営業">自営業</option>
+                                        <option value="専業主婦/主夫">専業主婦/主夫</option>
+                                        <option value="学生">学生</option>
+                                        <option value="無職">無職</option>
+                                        <option value="その他">その他</option>
+                                    </select>
+                                </div>
+
+                                <!-- 居住地選択 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">居住地</label>
+                                    <select id="prefecture" name="prefecture" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">選択してください</option>
+                                    </select>
+                                </div>
+
+                                <!-- 検索ボタン -->
+                                <div class="pt-4">
+                                    <button type="submit"
+                                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        検索
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ローディング表示 -->
+            <div class="loading mt-4 justify-center items-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                <span class="ml-2">検索中...</span>
+            </div>
+
+            <!-- 結果表示エリア -->
+            <div class="result-area mt-8 px-4 py-6 bg-white shadow rounded-lg">
+                <h2 class="text-xl font-semibold mb-4">検索結果</h2>
+                <div id="searchResult" class="prose"></div>
+                <div id="references" class="mt-4 text-sm text-gray-600"></div>
+            </div>
+
+            <!-- エラー表示 -->
+            <div id="errorMessage" class="hidden mt-4 px-4 py-3 rounded-md bg-red-100 text-red-700">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // APIキーの設定
+        const DIFY_API_KEY = 'YOUR_API_KEY'; // GitHub Actionsで置換される
+        const DIFY_API_URL = 'https://api.dify.ai/v1/chat-messages';
+
+        // 都道府県データ
+        const prefectures = [
+            "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
+            "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
+            "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県",
+            "静岡県", "愛知県", "三重県", "滋賀県", "京都府", "大阪府", "兵庫県",
+            "奈良県", "和歌山県", "鳥取県", "島根県", "岡山県", "広島県", "山口県",
+            "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県",
+            "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
+        ];
+
+        // デバッグ情報の表示
+        function debugApiRequest(query) {
+            if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+                console.group('API Request Debug Info');
+                console.log('API URL:', DIFY_API_URL);
+                console.log('API Key Length:', DIFY_API_KEY.length);
+                console.log('API Key Preview:', DIFY_API_KEY.substring(0, 5) + '...');
+                console.log('Query:', query);
+                console.groupEnd();
+            }
+        }
+
+        // 都道府県選択肢の生成
+        const prefectureSelect = document.getElementById('prefecture');
+        prefectures.forEach(pref => {
+            const option = document.createElement('option');
+            option.value = pref;
+            option.textContent = pref;
+            prefectureSelect.appendChild(option);
+        });
+
+        // Dify APIにリクエストを送信
+        async function sendToDify(query) {
+            try {
+                const response = await fetch(DIFY_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${DIFY_API_KEY}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        inputs: {},
+                        query: query,
+                        response_mode: 'blocking',
+                        user: 'default-user'
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('API Error:', errorData);
+                    throw new Error(`API Error: ${response.status} - ${errorData.message || response.statusText}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Request Error:', error);
+                throw new Error(error.message || 'APIリクエストに失敗しました');
+            }
+        }
+
+        // 結果表示
+        function showResult(response) {
+            const resultArea = document.querySelector('.result-area');
+            const searchResult = document.getElementById('searchResult');
+            const references = document.getElementById('references');
+
+            // 検索結果の表示
+            searchResult.innerHTML = response.answer.replace(/\n/g, '<br>');
+
+            // 参考情報の表示
+            if (response.metadata && response.metadata.retriever_resources) {
+                const resourcesList = response.metadata.retriever_resources
+                    .map(resource => `<li>${resource.document_name || '不明なドキュメント'}</li>`)
+                    .join('');
+                references.innerHTML = `
+                    <h3 class="font-semibold mb-2">参考情報：</h3>
+                    <ul class="list-disc pl-5">
+                        ${resourcesList}
+                    </ul>
+                `;
+            } else {
+                references.innerHTML = '';
+            }
+
+            resultArea.classList.add('active');
+        }
+
+        // エラー表示の改善
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = `
+                <div class="flex items-center">
+                    <svg class="h-5 w-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            errorDiv.classList.remove('hidden');
+        }
+
+        // ローディング表示の切り替え
+        function showLoading(show) {
+            const loading = document.querySelector('.loading');
+            if (show) {
+                loading.classList.add('active');
+            } else {
+                loading.classList.remove('active');
+            }
+        }
+
+        // エラーメッセージの非表示
+        function hideError() {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.classList.add('hidden');
+        }
+
+        // 結果エリアの非表示
+        function hideResult() {
+            const resultArea = document.querySelector('.result-area');
+            resultArea.classList.remove('active');
+        }
+
+        // フォーム送信処理
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const age = form.age.value;
+            const gender = form.gender.value;
+            const lifeStage = form.lifeStage.value;
+            const occupation = form.occupation.value;
+            const prefecture = form.prefecture.value;
+
+            // 入力チェック
+            if (!age || !gender || !lifeStage || !occupation || !prefecture) {
+                showError('すべての項目を入力してください。');
+                return;
+            }
+
+            // 検索クエリの作成
+            const query = `
+                以下の条件に該当する行政サービスや施策を教えてください：
+                - 年齢: ${age}歳
+                - 性別: ${gender}
+                - ライフステージ: ${lifeStage}
+                - 職業: ${occupation}
+                - 居住地: ${prefecture}
+            `;
+
+            // ローディング表示
+            showLoading(true);
+            hideError();
+            hideResult();
+
+            try {
+                // デバッグ情報の表示
+                debugApiRequest(query);
+
+                const response = await sendToDify(query);
+                if (response && response.answer) {
+                    showResult(response);
+                }
+            } catch (error) {
+                console.error('Error details:', error);
+                showError(`検索中にエラーが発生しました: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        });
+    </script>
+</body>
+</html>
