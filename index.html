@@ -275,12 +275,13 @@
 
             // 検索クエリの作成
             const query = `
-                以下の条件に該当する行政サービスや施策を教えてください：
-                - 年齢: ${age}歳
-                - 性別: ${gender}
-                - ライフステージ: ${lifeStage}
-                - 職業: ${occupation}
-                - 居住地: ${prefecture}
+                {
+                "性別": ${gender},
+                "年齢": ${age}歳,
+                "職種": ${occupation},
+                "居住地": ${prefecture},
+                "ライフステージ": ${lifeStage}
+                }
             `;
 
             // ローディング表示
