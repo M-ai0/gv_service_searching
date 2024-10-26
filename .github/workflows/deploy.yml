@@ -1,43 +1,49 @@
 name: Deploy to GitHub Pages
+
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
-  deploy:
+  build-and-deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout 🛎️
         uses: actions/checkout@v4
-      
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
-        
+
       - name: Replace API Key
         env:
           DIFY_API_KEY: ${{ secrets.DIFY_API_KEY }}
         run: |
-          sed -i "s/const DIFY_API_KEY = 'YOUR_API_KEY'/const DIFY_API_KEY = '${{ secrets.DIFY_API_KEY }}'/g" index.html
-          
+          sed -i "s|const DIFY_API_KEY = 'YOUR_API_KEY'|const DIFY_API_KEY = '${{ secrets.DIFY_API_KEY }}'|g" index.html
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-          
-      - name: Deploy to GitHub Pages
+
+      - name: Deploy to GitHub Pages 🚀
         id: deployment
         uses: actions/deploy-pages@v4
