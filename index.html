@@ -153,7 +153,7 @@
                                         <option value="">選択してください</option>
                                     </select>
                                 </div>
-                                <!-- 都道府県-->
+                                <!-- 市区町村-->
                                 <div>
                                     <Label htmlFor="city">居住地域_市区町村</Label>
                                     <Input type="text" id="city" required placeholder="例：渋谷区" />
@@ -375,16 +375,16 @@
             
             const form = e.target;
             const formData = {
-                年齢: form.age.value,
-                性別: from.gender.value,
-                最終学歴: form.education.value,
-                就業状態: form.employmentStatus.value,
-                居住形態: form.livingArrangement.value,
-                居住地域_都道府県: form.prefecture.value,
-                居住地域_市区町村: form.city.value,
-                世帯年収: form.income.value,
-                婚姻状況: form.maritalStatus.value,
-                扶養家族: form.dependents.value
+            年齢: form.age.value,
+            性別: from.gender.value,
+            最終学歴: form.education.value,
+            就業状態: form.employmentStatus.value,
+            居住形態: form.livingArrangement.value,
+            居住地域_都道府県: form.prefecture.value,
+            居住地域_市区町村: form.city.value,
+            世帯年収: form.income.value,
+            婚姻状況: form.maritalStatus.value,
+            扶養家族: form.dependents.value
             };
 
             // 入力チェック
