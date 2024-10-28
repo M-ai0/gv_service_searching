@@ -21,10 +21,14 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
+      - name: Set Environment Variables
+        env:
+          DIFY_API_KEY: ${{ secrets.DIFY_API_KEY }}
+        run: |
+          echo "DIFY_API_KEY=$DIFY_API_KEY" >> $GITHUB_ENV
+
       - name: Checkout 🛎️
         uses: actions/checkout@v4
 
