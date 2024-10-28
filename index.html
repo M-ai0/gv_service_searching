@@ -55,8 +55,50 @@
                                     </div>
                                 </div>
 
-                                <!-- ライフステージ選択 -->
+                                <!-- 最終学歴/在学中の場合は学年 -->
                                 <div>
+                                    <label class="block text-sm font-medium text-gray-700">最終学歴/在学状況</label>
+                                    <select id="education" name="education" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">選択してください</option>
+                                        <option value="中学生">中学生</option>
+                                        <option value="高校1年">高校1年</option>
+                                        <option value="高校2年">高校2年</option>
+                                        <option value="高校3年">高校3年</option>
+                                        <option value="大学1年">大学1年</option>
+                                        <option value="大学2年">大学2年</option>
+                                        <option value="大学3年">大学3年</option>
+                                        <option value="大学4年">大学4年</option>
+                                        <option value="大学院生">大学院生</option>
+                                        <option value="中学卒">中学卒</option>
+                                        <option value="高校卒">高校卒</option>
+                                        <option value="専門学校卒">専門学校卒</option>
+                                        <option value="短大卒">短大卒</option>
+                                        <option value="大学卒">大学卒</option>
+                                        <option value="大学院卒">大学院卒</option>
+                                    </select>
+                                </div>
+
+                                <!-- 就業状態 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">就業状態</label>
+                                    <select id="employmentStatus" name="employmentStatus" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">選択してください</option>
+                                        <option value="学生">学生</option>
+                                        <option value="正社員">正社員</option>
+                                        <option value="契約社員">契約社員</option>
+                                        <option value="パート・アルバイト">パート・アルバイト</option>
+                                        <option value="派遣社員">派遣社員</option>
+                                        <option value="自営業">自営業</option>
+                                        <option value="求職中">求職中</option>
+                                        <option value="休職中">休職中</option>
+                                        <option value="その他">その他</option>
+                                    </select>
+                                </div>
+
+                                <!-- ライフステージ選択 -->
+                                <!-- <div>
                                     <label class="block text-sm font-medium text-gray-700">ライフステージ</label>
                                     <select id="lifeStage" name="lifeStage" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -67,10 +109,10 @@
                                         <option value="結婚・子育て">結婚・子育て</option>
                                         <option value="退職後">退職後</option>
                                     </select>
-                                </div>
+                                </div> -->
 
                                 <!-- 職業選択 -->
-                                <div>
+                                <!-- <div>
                                     <label class="block text-sm font-medium text-gray-700">職業</label>
                                     <select id="occupation" name="occupation" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -83,15 +125,86 @@
                                         <option value="無職">無職</option>
                                         <option value="その他">その他</option>
                                     </select>
+                                </div> -->
+
+                                <!-- 居住形態 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">居住形態</label>
+                                    <select id="livingArrangement" name="livingArrangement" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">選択してください</option>
+                                        <option value="実家（親と同居）">実家（親と同居）</option>
+                                        <option value="実家（祖父母と同居）">実家（祖父母と同居）</option>
+                                        <option value="実家（親・祖父母と同居）">実家（親・祖父母と同居）</option>
+                                        <option value="一人暮らし（賃貸）">一人暮らし（賃貸）</option>
+                                        <option value="一人暮らし（持ち家）">一人暮らし（持ち家）</option>
+                                        <option value="パートナーと同居（賃貸）">パートナーと同居（賃貸）</option>
+                                        <option value="パートナーと同居（持ち家）">パートナーと同居（持ち家）</option>
+                                        <option value="ルームシェア">ルームシェア</option>
+                                    </select>
                                 </div>
 
                                 <!-- 居住地選択 -->
+                                <!-- 都道府県-->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">居住地</label>
+                                    <label class="block text-sm font-medium text-gray-700">居住地域_都道府県</label>
                                     <select id="prefecture" name="prefecture" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">選択してください</option>
                                     </select>
+                                </div>
+                                <!-- 都道府県-->
+                                <div>
+                                    <Label htmlFor="city">居住地域_市区町村</Label>
+                                    <Input type="text" id="city" required placeholder="例：渋谷区" />
+                                  </div>
+
+                                <!-- 世帯年収 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">世帯年収</label>
+                                    <select id="income" name="income" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">選択してください</option>
+                                        <option value="103万円未満">103万円未満</option>
+                                        <option value="100~200万円">100~200万円</option>
+                                        <option value="200-300万円">200-300万円</option>
+                                        <option value="300-400万円">300-400万円</option>
+                                        <option value="400-500万円">400-500万円</option>
+                                        <option value="500-600万円">500-600万円</option>
+                                        <option value="600-700万円">600-700万円</option>
+                                        <option value="700-800万円">700-800万円</option>
+                                        <option value="800-900万円">800-900万円</option>
+                                        <option value="900-1000万円">900-1000万円</option>
+                                        <option value="1000万円以上">1000万円以上</option>
+                                    </select>
+                                </div>
+
+                                <!-- 婚姻状況 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">婚姻状況</label>
+                                    <select id="maritalStatus" name="maritalStatus" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">選択してください</option>
+                                        <option value="未婚">未婚</option>
+                                        <option value="既婚">既婚</option>
+                                        <option value="離婚">離婚</option>
+                                        <option value="死別">死別</option>
+                                    </select>
+                                </div>
+
+                                <!-- 扶養家族 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">扶養家族の有無</label>
+                                    <div class="mt-2 space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="dependents" value="あり" required class="form-radio">
+                                            <span class="ml-2">あり</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="dependents" value="なし" required class="form-radio">
+                                            <span class="ml-2">なし</span>
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <!-- 検索ボタン -->
@@ -261,11 +374,18 @@
             e.preventDefault();
             
             const form = e.target;
-            const age = form.age.value;
-            const gender = form.gender.value;
-            const lifeStage = form.lifeStage.value;
-            const occupation = form.occupation.value;
-            const prefecture = form.prefecture.value;
+            const formData = {
+                年齢: form.age.value,
+                性別: from.gender.value,
+                最終学歴: form.education.value,
+                就業状態: form.employmentStatus.value,
+                居住形態: form.livingArrangement.value,
+                居住地域_都道府県: form.prefecture.value,
+                居住地域_市区町村: form.city.value,
+                世帯年収: form.income.value,
+                婚姻状況: form.maritalStatus.value,
+                扶養家族: form.dependents.value
+            };
 
             // 入力チェック
             if (!age || !gender || !lifeStage || !occupation || !prefecture) {
@@ -276,11 +396,16 @@
             // 検索クエリの作成
             const query = `
                 {
-                "性別": ${gender},
                 "年齢": ${age},
-                "職種": ${occupation},
-                "ライフステージ": ${lifeStage}.
-                "居住地": ${prefecture}
+                "性別": ${gender},
+                "最終学歴": ${education},
+                "就業状態": ${employmentStatus},
+                "居住体系": ${livingArrangement},
+                "居住地域_都道府県": ${prefecture},
+                "居住地域_市区町村": ${city},
+                "世帯年収": ${income},
+                "婚姻状況": ${maritalStatus},
+                "扶養家族": ${dependents}
                 }
             `;
 
