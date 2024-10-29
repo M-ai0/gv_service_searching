@@ -197,12 +197,8 @@
                 <span class="ml-2">検索中...</span>
             </div>
 
-            <!-- 結果表示エリア -->
-            <div class="result-area mt-8 px-4 py-6 bg-white shadow rounded-lg">
-                <h2 class="text-xl font-semibold mb-4">検索結果</h2>
-                <div id="searchResult" class="prose"></div>
-                <div id="references" class="mt-4 text-sm text-gray-600"></div>
-            </div>
+            <!-- 結果表示エリアをReactのルート要素に変更 -->
+            <div id="dashboard-root" class="result-area mt-8"></div>
 
             <!-- エラー表示 -->
             <div id="errorMessage" class="hidden mt-4 px-4 py-3 rounded-md bg-red-100 text-red-700">
@@ -210,7 +206,61 @@
         </div>
     </div>
 
-    <script>
+    <script type="text/babel">
+        // ServicesDashboardコンポーネントの定義
+        const ServicesDashboard = ({ searchResults }) => {
+            return (
+                <div className="bg-white shadow rounded-lg">
+                    <div className="grid gap-6 p-6">
+                        <div className="bg-white rounded-lg shadow">
+                            <div className="px-4 py-5 sm:p-6">
+                                <h3 className="text-lg font-medium">サービス概要</h3>
+                                <div className="mt-5 grid grid-cols-3 gap-6">
+                                    <div>
+                                        <dt className="text-sm font-medium text-gray-500">対象サービス数</dt>
+                                        <dd className="mt-1 text-3xl font-semibold text-gray-900">
+                                            {searchResults.totalServices}
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt className="text-sm font-medium text-gray-500">対象施策数</dt>
+                                        <dd className="mt-1 text-3xl font-semibold text-gray-900">
+                                            {searchResults.totalPolicies}
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt className="text-sm font-medium text-gray-500">関連情報数</dt>
+                                        <dd className="mt-1 text-3xl font-semibold text-gray-900">
+                                            {searchResults.totalResources}
+                                        </dd>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow">
+                            <div className="px-4 py-5 sm:p-6">
+                                <h3 className="text-lg font-medium">主な対象サービス</h3>
+                                <div className="mt-5 grid grid-cols-2 gap-4">
+                                    {searchResults.topServices.map((service, index) => (
+                                        <div key={index} className="border rounded p-4">
+                                            <dt className="text-sm font-medium text-gray-500">{service.name}</dt>
+                                            <dd className="mt-1 text-2xl font-semibold text-gray-900">
+                                                {service.count}
+                                            </dd>
+                                            <dd className="mt-1 text-sm text-gray-500">
+                                                {service.description}
+                                            </dd>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // APIキーの設定
         const DIFY_API_KEY = 'YOUR_API_KEY';
         const DIFY_API_URL = 'https://api.dify.ai/v1/chat-messages';
@@ -279,29 +329,30 @@
 
         // 結果表示
         function showResult(response) {
-            const resultArea = document.querySelector('.result-area');
-            const searchResult = document.getElementById('searchResult');
-            const references = document.getElementById('references');
+            const dashboardRoot = document.getElementById('dashboard-root');
+            
+            // APIレスポンスからダッシュボード用のデータを生成
+            const dashboardData = {
+                totalServices: 10, // APIレスポンスから適切な値を取得
+                totalPolicies: 5,
+                totalResources: 15,
+                topServices: [
+                    { name: '子育て支援', count: 3, description: '子育て世帯向けの支援サービス' },
+                    { name: '就業支援', count: 2, description: '就職・転職支援サービス' }
+                ],
+                topPolicies: [
+                    { name: '住宅支援', count: 2, description: '住宅取得・賃貸補助' },
+                    { name: '教育支援', count: 1, description: '教育費支援制度' }
+                ]
+            };
 
-            // 検索結果の表示
-            searchResult.innerHTML = response.answer.replace(/\n/g, '<br>');
+            // Reactコンポーネントをレンダリング
+            ReactDOM.render(
+                <ServicesDashboard searchResults={dashboardData} />,
+                dashboardRoot
+            );
 
-            // 参考情報の表示
-            if (response.metadata && response.metadata.retriever_resources) {
-                const resourcesList = response.metadata.retriever_resources
-                    .map(resource => `<li>${resource.document_name || '不明なドキュメント'}</li>`)
-                    .join('');
-                references.innerHTML = `
-                    <h3 class="font-semibold mb-2">参考情報：</h3>
-                    <ul class="list-disc pl-5">
-                        ${resourcesList}
-                    </ul>
-                `;
-            } else {
-                references.innerHTML = '';
-            }
-
-            resultArea.classList.add('active');
+            dashboardRoot.classList.add('active');
         }
 
         // エラー表示
