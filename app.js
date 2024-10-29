@@ -133,22 +133,23 @@
         e.preventDefault();
         
         const form = e.target;
-        const formData = 
-        {
-        年齢: form.age.value,
-        性別: from.gender.value,
-        最終学歴: form.education.value,
-        就業状態: form.employmentStatus.value,
-        居住形態: form.livingArrangement.value,
-        居住地域_都道府県: form.prefecture.value,
-        居住地域_市区町村: form.city.value,
-        世帯年収: form.income.value,
-        婚姻状況: form.maritalStatus.value,
-        扶養家族: form.dependents.value
+        const formData = {
+            年齢: form.age.value,
+            性別: form.gender.value, 
+            最終学歴: form.education.value,
+            就業状態: form.employmentStatus.value,
+            居住形態: form.livingArrangement.value,
+            居住地域_都道府県: form.prefecture.value,
+            居住地域_市区町村: form.city.value,
+            世帯年収: form.income.value,
+            婚姻状況: form.maritalStatus.value,
+            扶養家族: form.dependents.value
         };
 
         // 入力チェック
-        if (!age || !gender || !lifeStage || !occupation || !prefecture) {
+        if (!formData.年齢 || !formData.性別 || !formData.最終学歴 || !formData.就業状態 || 
+            !formData.居住形態 || !formData.居住地域_都道府県 || !formData.居住地域_市区町村 ||
+            !formData.世帯年収 || !formData.婚姻状況 || !formData.扶養家族) {
             showError('すべての項目を入力してください。');
             return;
         }
@@ -156,16 +157,16 @@
         // 検索クエリの作成
         const query = `
             {
-            "年齢": ${age},
-            "性別": ${gender},
-            "最終学歴": ${education},
-            "就業状態": ${employmentStatus},
-            "居住体系": ${livingArrangement},
-            "居住地域_都道府県": ${prefecture},
-            "居住地域_市区町村": ${city},
-            "世帯年収": ${income},
-            "婚姻状況": ${maritalStatus},
-            "扶養家族": ${dependents}
+            "年齢": ${formData.年齢},
+            "性別": "${formData.性別}",
+            "最終学歴": "${formData.最終学歴}",
+            "就業状態": "${formData.就業状態}",
+            "居住体系": "${formData.居住形態}",
+            "居住地域_都道府県": "${formData.居住地域_都道府県}",
+            "居住地域_市区町村": "${formData.居住地域_市区町村}",
+            "世帯年収": "${formData.世帯年収}",
+            "婚姻状況": "${formData.婚姻状況}",
+            "扶養家族": "${formData.扶養家族}"
             }
         `;
 
