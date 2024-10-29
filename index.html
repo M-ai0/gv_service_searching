@@ -438,56 +438,55 @@
     <!-- React/Babel Script -->
     <script type="text/babel">
     // ServicesDashboardコンポーネントの定義
-    ServicesDashboard = ({ searchResults }) => {
-        return (
-            <div className="bg-white shadow rounded-lg">
-                <div className="grid gap-6 p-6">
-                    <div className="bg-white rounded-lg shadow">
-                        <div className="px-4 py-5 sm:p-6">
-                            <h3 className="text-lg font-medium">サービス概要</h3>
-                            <div className="mt-5 grid grid-cols-3 gap-6">
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500">対象サービス数</dt>
-                                    <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                                        {searchResults.totalServices}
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500">対象施策数</dt>
-                                    <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                                        {searchResults.totalPolicies}
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt className="text-sm font-medium text-gray-500">関連情報数</dt>
-                                    <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                                        {searchResults.totalResources}
-                                    </dd>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    ServicesDashboard = ({ searchResults = {} }) => {
+      // デフォルト値の設定
+      const {
+        totalServices = 0,
+        totalPolicies = 0,
+        totalResources = 0,
+        topServices = []
+      } = searchResults;
     
-                    <div className="bg-white rounded-lg shadow">
-                        <div className="px-4 py-5 sm:p-6">
-                            <h3 className="text-lg font-medium">主な対象サービス</h3>
-                            <div className="mt-5 grid grid-cols-2 gap-4">
-                                {searchResults.topServices.map((service, index) => (
-                                    <div key={index} className="border rounded p-4">
-                                        <dt className="text-sm font-medium text-gray-500">{service.name}</dt>
-                                        <dd className="mt-1 text-2xl font-semibold text-gray-900">
-                                            {service.count}
-                                        </dd>
-                                        <dd className="mt-1 text-sm text-gray-500">
-                                            {service.description}
-                                        </dd>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      return (
+        <div className="p-4">
+          {/* サマリー統計 */}
+          <div className="flex gap-4 mb-4">
+            <div className="flex-1 p-3 bg-white rounded shadow">
+              <div className="text-sm text-gray-500">対象サービス数</div>
+              <div className="text-2xl font-bold">{totalServices}</div>
             </div>
-        );
+            <div className="flex-1 p-3 bg-white rounded shadow">
+              <div className="text-sm text-gray-500">対象施策数</div>
+              <div className="text-2xl font-bold">{totalPolicies}</div>
+            </div>
+            <div className="flex-1 p-3 bg-white rounded shadow">
+              <div className="text-sm text-gray-500">関連情報数</div>
+              <div className="text-2xl font-bold">{totalResources}</div>
+            </div>
+          </div>
+    
+          {/* サービス一覧 */}
+          <div className="bg-white rounded shadow p-4">
+            <h3 className="text-lg mb-3">主な対象サービス</h3>
+            <div className="space-y-2">
+              {topServices.length > 0 ? (
+                topServices.map((service, index) => (
+                  <div key={index} className="border-b pb-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium">{service.name}</span>
+                      <span className="text-sm text-gray-500">{service.count}件</span>
+                    </div>
+                    <div className="text-sm text-gray-500">{service.description}</div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-gray-500 text-center py-4">
+                  サービスが見つかりませんでした
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
     };
     </script>
