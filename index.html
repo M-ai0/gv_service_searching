@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>日本の行政サービス・施策検索</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="icon" href="data:,">
     <style>
         .loading {
             display: none;
@@ -97,36 +98,6 @@
                                     </select>
                                 </div>
 
-                                <!-- ライフステージ選択 -->
-                                <!-- <div>
-                                    <label class="block text-sm font-medium text-gray-700">ライフステージ</label>
-                                    <select id="lifeStage" name="lifeStage" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">選択してください</option>
-                                        <option value="学生">学生</option>
-                                        <option value="就職活動中">就職活動中</option>
-                                        <option value="社会人">社会人</option>
-                                        <option value="結婚・子育て">結婚・子育て</option>
-                                        <option value="退職後">退職後</option>
-                                    </select>
-                                </div> -->
-
-                                <!-- 職業選択 -->
-                                <!-- <div>
-                                    <label class="block text-sm font-medium text-gray-700">職業</label>
-                                    <select id="occupation" name="occupation" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">選択してください</option>
-                                        <option value="会社員">会社員</option>
-                                        <option value="公務員">公務員</option>
-                                        <option value="自営業">自営業</option>
-                                        <option value="専業主婦/主夫">専業主婦/主夫</option>
-                                        <option value="学生">学生</option>
-                                        <option value="無職">無職</option>
-                                        <option value="その他">その他</option>
-                                    </select>
-                                </div> -->
-
                                 <!-- 居住形態 -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">居住形態</label>
@@ -145,7 +116,6 @@
                                 </div>
 
                                 <!-- 居住地選択 -->
-                                <!-- 都道府県-->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">居住地域_都道府県</label>
                                     <select id="prefecture" name="prefecture" required
@@ -153,11 +123,12 @@
                                         <option value="">選択してください</option>
                                     </select>
                                 </div>
-                                <!-- 市区町村-->
+
                                 <div>
-                                    <Label htmlFor="city">居住地域_市区町村</Label>
-                                    <Input type="text" id="city" required placeholder="例：渋谷区" />
-                                  </div>
+                                    <label class="block text-sm font-medium text-gray-700">居住地域_市区町村</label>
+                                    <input type="text" id="city" name="city" required placeholder="例：渋谷区"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
 
                                 <!-- 世帯年収 -->
                                 <div>
@@ -241,7 +212,7 @@
 
     <script>
         // APIキーの設定
-        const DIFY_API_KEY = 'YOUR_API_KEY'; // GitHub Actionsで置換される
+        const DIFY_API_KEY = 'YOUR_API_KEY';
         const DIFY_API_URL = 'https://api.dify.ai/v1/chat-messages';
 
         // 都道府県データ
@@ -255,6 +226,15 @@
             "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
         ];
 
+        // 都道府県選択肢の生成
+        const prefectureSelect = document.getElementById('prefecture');
+        prefectures.forEach(pref => {
+            const option = document.createElement('option');
+            option.value = pref;
+            option.textContent = pref;
+            prefectureSelect.appendChild(option);
+        });
+
         // デバッグ情報の表示
         function debugApiRequest(query) {
             if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
@@ -267,16 +247,7 @@
             }
         }
 
-        // 都道府県選択肢の生成
-        const prefectureSelect = document.getElementById('prefecture');
-        prefectures.forEach(pref => {
-            const option = document.createElement('option');
-            option.value = pref;
-            option.textContent = pref;
-            prefectureSelect.appendChild(option);
-        });
-
-        // Dify APIにリクエストを送信
+        // APIリクエスト送信
         async function sendToDify(query) {
             try {
                 const response = await fetch(DIFY_API_URL, {
@@ -333,7 +304,7 @@
             resultArea.classList.add('active');
         }
 
-        // エラー表示の改善
+        // エラー表示
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
             errorDiv.innerHTML = `
@@ -373,43 +344,69 @@
         document.getElementById('searchForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // フォームデータの取得
             const form = e.target;
+            
+            // ラジオボタンの値を安全に取得
+            const selectedGender = form.querySelector('input[name="gender"]:checked');
+            const selectedDependents = form.querySelector('input[name="dependents"]:checked');
+
+            // フォームデータオブジェクトの作成
             const formData = {
-                年齢: form.age.value,
-                性別: from.gender.value,
+                年齢: form.age.value.trim(),
+                性別: selectedGender ? selectedGender.value : '',
                 最終学歴: form.education.value,
                 就業状態: form.employmentStatus.value,
                 居住形態: form.livingArrangement.value,
                 居住地域_都道府県: form.prefecture.value,
-                居住地域_市区町村: form.city.value,
+                居住地域_市区町村: form.city.value.trim(),
                 世帯年収: form.income.value,
                 婚姻状況: form.maritalStatus.value,
-                扶養家族: form.dependents.value
+                扶養家族: selectedDependents ? selectedDependents.value : ''
             };
 
-            // 入力チェック
-            if (!age || !gender || !lifeStage || !occupation || !prefecture) {
-                showError('すべての項目を入力してください。');
+            // デバッグ用ログ
+            console.log('Collected Form Data:', formData);
+
+            // 必須項目のチェック
+            const requiredFields = {
+                '年齢': formData.年齢,
+                '性別': formData.性別,
+                '最終学歴': formData.最終学歴,
+                '就業状態': formData.就業状態,
+                '居住地域_都道府県': formData.居住地域_都道府県
+            };
+
+            // 必須項目の検証
+            const missingFields = Object.entries(requiredFields)
+                .filter(([_, value]) => !value)
+                .map(([key]) => key);
+
+            if (missingFields.length > 0) {
+                showError(`以下の必須項目を入力してください：${missingFields.join('、')}`);
                 return;
             }
 
             // 検索クエリの作成
             const query = `
                 {
-                "年齢": ${age},
-                "性別": ${gender},
-                "最終学歴": ${education},
-                "就業状態": ${employmentStatus},
-                "居住体系": ${livingArrangement},
-                "居住地域_都道府県": ${prefecture},
-                "居住地域_市区町村": ${city},
-                "世帯年収": ${income},
-                "婚姻状況": ${maritalStatus},
-                "扶養家族": ${dependents}
+                    "年齢": "${formData.年齢}",
+                    "性別": "${formData.性別}",
+                    "最終学歴": "${formData.最終学歴}",
+                    "就業状態": "${formData.就業状態}",
+                    "居住形態": "${formData.居住形態}",
+                    "居住地域_都道府県": "${formData.居住地域_都道府県}",
+                    "居住地域_市区町村": "${formData.居住地域_市区町村 || ''}",
+                    "世帯年収": "${formData.世帯年収}",
+                    "婚姻状況": "${formData.婚姻状況}",
+                    "扶養家族": "${formData.扶養家族}"
                 }
-            `;
+            `.trim();
 
-            // ローディング表示
+            // デバッグ用ログ
+            console.log('Generated Query:', query);
+
+            // ローディング表示の制御
             showLoading(true);
             hideError();
             hideResult();
@@ -421,6 +418,8 @@
                 const response = await sendToDify(query);
                 if (response && response.answer) {
                     showResult(response);
+                } else {
+                    throw new Error('APIからの応答が不正です');
                 }
             } catch (error) {
                 console.error('Error details:', error);
